@@ -1,0 +1,31 @@
+# Importing libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load datasets
+customers = pd.read_csv("Customers.csv")
+products = pd.read_csv("Products.csv")
+transactions = pd.read_csv("Transactions.csv")
+
+# Quick dataset overview
+print(customers.info())
+print(products.info())
+print(transactions.info())
+
+# Merge datasets for comprehensive analysis
+merged_data = transactions.merge(customers, on="CustomerID").merge(products, on="ProductID")
+
+# Analyze customer distribution by region
+region_distribution = customers['Region'].value_counts()
+region_distribution.plot(kind='bar', title='Customer Distribution by Region')
+plt.show()
+
+# Top-selling products
+top_products = merged_data.groupby('ProductName')['Quantity'].sum().sort_values(ascending=False)
+print("Top-Selling Products:\n", top_products.head(10))
+
+# Insights
+print("Number of unique customers:", customers['CustomerID'].nunique())
+print("Number of unique products:", products['ProductID'].nunique())
+print("Total revenue:", merged_data['TotalValue'].sum())
