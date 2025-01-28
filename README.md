@@ -1,4 +1,5 @@
-#Output for Task1:
+# Output for Task1:
+
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 200 entries, 0 to 199
 Data columns (total 4 columns):
@@ -57,7 +58,7 @@ Number of unique customers: 200
 Number of unique products: 100
 Total revenue: 689995.56
 
-#Output for task2
+# Output for Task2
 Index(['TransactionID', 'CustomerID', 'ProductID', 'TransactionDate',
        'Quantity', 'TotalValue', 'Price_x', 'CustomerName', 'Region',
        'SignupDate', 'ProductName', 'Category', 'Price_y'],
@@ -95,6 +96,6 @@ Index(['TransactionID', 'CustomerID', 'ProductID', 'TransactionDate',
 3      C0002             C0157         0.999994
 4      C0002             C0166         0.999875
 
-#Output for Task3
+# Output for Task3
 ![image](https://github.com/user-attachments/assets/aead1844-b329-4a3f-846e-8195a142effd)
 
