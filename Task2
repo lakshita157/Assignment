@@ -1,0 +1,60 @@
+# Import necessary libraries
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.preprocessing import StandardScaler
+
+# Load datasets
+customers = pd.read_csv("Customers.csv")
+products = pd.read_csv("Products.csv")
+transactions = pd.read_csv("Transactions.csv")
+
+# Merge datasets for comprehensive analysis
+merged_data = transactions.merge(customers, on="CustomerID").merge(products, on="ProductID")
+
+# Check merged data structure
+print(merged_data.columns)
+print(merged_data.head())
+
+# Aggregate transaction data per customer
+# Ensure 'Price' is replaced with relevant available columns if missing
+customer_profile = merged_data.groupby('CustomerID').agg({
+    'TotalValue': 'sum',        # Total transaction value
+    'Quantity': 'sum',          # Total quantity purchased
+}).reset_index()
+
+# Check the aggregated data
+print(customer_profile.head())
+
+# Standardize the data for similarity calculations
+scaler = StandardScaler()
+scaled_data = scaler.fit_transform(customer_profile.iloc[:, 1:])
+
+# Compute cosine similarity
+similarity_matrix = cosine_similarity(scaled_data)
+
+# Convert similarity matrix into a DataFrame
+similarity_df = pd.DataFrame(
+    similarity_matrix,
+    index=customer_profile['CustomerID'],
+    columns=customer_profile['CustomerID']
+)
+
+# Generate top 3 lookalike customers for each customer
+lookalike = {}
+for customer in customer_profile['CustomerID'][:20]:  # First 20 customers (C0001 - C0020)
+    similar_customers = similarity_df[customer].sort_values(ascending=False)[1:4]
+    lookalike[customer] = list(zip(similar_customers.index, similar_customers.values))
+
+# Convert lookalike results to a DataFrame
+lookalike_data = []
+for customer_id, recommendations in lookalike.items():
+    for similar_id, score in recommendations:
+        lookalike_data.append({"CustomerID": customer_id, "SimilarCustomerID": similar_id, "SimilarityScore": score})
+
+lookalike_df = pd.DataFrame(lookalike_data)
+
+# Save the lookalike results to a CSV file
+lookalike_df.to_csv("Lookalike.csv", index=False)
+
+# Print sample recommendations
+print(lookalike_df.head())
